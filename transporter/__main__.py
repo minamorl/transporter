@@ -37,7 +37,7 @@ def get_extension(filename):
 def generate_hashed_filename(filepath):
     filename = os.path.basename(filepath)
     extension = get_extension(filepath)
-    return hash_from_file(filename) + extension
+    return hash_from_file(filepath) + extension
 
 def main():
     scp = setup_scp()
