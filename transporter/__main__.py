@@ -1,6 +1,6 @@
 import os
 import paramiko
-import hashlib 
+import hashlib
 from scp import SCPClient
 import sys
 
@@ -8,7 +8,7 @@ import sys
 def setup_scp():
     config_file = os.path.join(os.getenv('HOME'), '.ssh/config')
     known_host = paramiko.hostkeys.HostKeys()
-    
+
     ssh_config = paramiko.SSHConfig()
     ssh_config.parse(open(config_file, 'r'))
     lkup = ssh_config.lookup("minamorl-com")
@@ -18,11 +18,12 @@ def setup_scp():
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(
         lkup['hostname'],
-        port=int(lkup['port']) ,
+        port=int(lkup['port']),
         key_filename=os.path.join(os.getenv('HOME'), '.ssh/id_rsa.pub')
-        )
+    )
     scp = SCPClient(client.get_transport())
     return scp
+
 
 def hash_from_file(filepath):
     with open(filepath, "rb") as f:
@@ -31,13 +32,16 @@ def hash_from_file(filepath):
         sha1h.update(data)
         return sha1h.hexdigest()
 
+
 def get_extension(filename):
     return os.path.splitext(filename)[1]
+
 
 def generate_hashed_filename(filepath):
     filename = os.path.basename(filepath)
     extension = get_extension(filepath)
     return hash_from_file(filepath) + extension
+
 
 def main():
     scp = setup_scp()
@@ -51,4 +55,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
