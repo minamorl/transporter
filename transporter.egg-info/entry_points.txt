@@ -1,3 +1,0 @@
-[console_scripts]
-transporter = transporter.__main__:main
-

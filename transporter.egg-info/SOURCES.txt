@@ -1,7 +1,0 @@
-setup.py
-transporter/__main__.py
-transporter.egg-info/PKG-INFO
-transporter.egg-info/SOURCES.txt
-transporter.egg-info/dependency_links.txt
-transporter.egg-info/entry_points.txt
-transporter.egg-info/top_level.txt
