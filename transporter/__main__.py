@@ -4,6 +4,7 @@ import hashlib
 from scp import SCPClient
 import sys
 
+from transporter.compress import is_image_compressable, compress
 
 def setup_scp():
     config_file = os.path.join(os.getenv('HOME'), '.ssh/config')
@@ -25,7 +26,7 @@ def setup_scp():
     return scp
 
 
-def hash_from_file(filepath):
+def hash_from_file(filepath): 
     with open(filepath, "rb") as f:
         data = f.read()
         sha1h = hashlib.sha1()
@@ -45,13 +46,23 @@ def generate_hashed_filename(filepath):
 
 def main():
     scp = setup_scp()
-    filepath = sys.argv[1]
+    filepath = os.path.expanduser(sys.argv[1])
     new_filename = generate_hashed_filename(filepath)
 
     remote_path = "bucket/" + new_filename
     scp.put(filepath, remote_path)
-    scp.close()
     print(remote_path)
+    scp.close()
+
+    if is_image_compressable(filepath):
+        remote_path_thumb = remote_path + ":thumb"
+        compressed = compress(filepath)
+        scp = setup_scp()
+        scp.put(compressed.name, remote_path_thumb)
+        scp.close()
+        compressed.close()
+        print(remote_path_thumb)
+
 
 if __name__ == "__main__":
     main()
