@@ -1,12 +1,11 @@
 import os
 import paramiko
 import hashlib
-from scp import SCPClient
 import sys
 
 from transporter.compress import is_image_compressable, compress
 
-def setup_scp():
+def setup_ssh():
     config_file = os.path.join(os.getenv('HOME'), '.ssh/config')
     known_host = paramiko.hostkeys.HostKeys()
 
@@ -22,8 +21,7 @@ def setup_scp():
         port=int(lkup['port']),
         key_filename=os.path.join(os.getenv('HOME'), '.ssh/id_rsa.pub')
     )
-    scp = SCPClient(client.get_transport())
-    return scp
+    return client
 
 
 def hash_from_file(filepath): 
@@ -53,20 +51,22 @@ def main():
     new_filename = generate_hashed_filename(filepath)
 
     remote_path = "bucket/" + new_filename
-    scp = setup_scp()
-    scp.put(filepath, remote_path)
-    scp.close()
+    ssh = setup_ssh()
+    sftp = ssh.open_sftp()
+    sftp.put(filepath, remote_path)
+    sftp.close()
     print(remote_path)
 
     if is_image_compressable(filepath):
         remote_path_thumb = remote_path + ":thumb"
         compressed = compress(filepath)
-        scp = setup_scp()
-        scp.put(compressed.name, remote_path_thumb)
-        scp.close()
+        sftp = ssh.open_sftp()
+        sftp.put(compressed.name, remote_path_thumb)
+        sftp.close()
         compressed.close()
         print(remote_path_thumb)
 
+    ssh.close()
 
 if __name__ == "__main__":
     main()
