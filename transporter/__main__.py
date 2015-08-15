@@ -45,14 +45,18 @@ def generate_hashed_filename(filepath):
 
 
 def main():
-    scp = setup_scp()
+    if not (len(sys.argv) > 1 and os.path.isfile(sys.argv[1])):
+        print("Missing argument. Abort.")
+        return 1
+
     filepath = os.path.expanduser(sys.argv[1])
     new_filename = generate_hashed_filename(filepath)
 
     remote_path = "bucket/" + new_filename
+    scp = setup_scp()
     scp.put(filepath, remote_path)
-    print(remote_path)
     scp.close()
+    print(remote_path)
 
     if is_image_compressable(filepath):
         remote_path_thumb = remote_path + ":thumb"
