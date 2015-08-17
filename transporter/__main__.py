@@ -5,6 +5,7 @@ import sys
 
 from transporter.compress import is_image_compressable, compress
 
+
 def setup_ssh():
     config_file = os.path.join(os.getenv('HOME'), '.ssh/config')
     known_host = paramiko.hostkeys.HostKeys()
@@ -24,7 +25,7 @@ def setup_ssh():
     return client
 
 
-def hash_from_file(filepath): 
+def hash_from_file(filepath):
     with open(filepath, "rb") as f:
         data = f.read()
         sha1h = hashlib.sha1()
