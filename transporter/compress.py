@@ -18,5 +18,5 @@ def compress(path, size=(1024, 1024)):
     im = Image.open(path)
     im.thumbnail(size, Image.ANTIALIAS)
     with NamedTemporaryFile(delete=False) as temp:
-        im.save(temp, _detect_valid_format(path))
+        im.save(temp, _detect_valid_format(path), quality=100, optimize=True)
         return temp
