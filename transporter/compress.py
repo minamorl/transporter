@@ -14,7 +14,7 @@ def _detect_valid_format(path):
     return {".jpg": "jpeg", ".png": "png"}.get(ext)
 
 
-def compress(path, size=(1024, 1024)):
+def compress(path, size=(1024, 3000)):
     im = Image.open(path)
     im.thumbnail(size, Image.ANTIALIAS)
     with NamedTemporaryFile(delete=False) as temp:
